@@ -1,6 +1,17 @@
 "use client";
 
 import { MouseEvent, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { setLoading } from "../reducers/loadingReducer";
+
+interface LoadingState {
+  loading: boolean;
+}
+
+interface Errors {
+  name: string[];
+  description: string[];
+}
 
 export default function TaskInput({
   updateTasks,
@@ -9,9 +20,15 @@ export default function TaskInput({
 }) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [errors, setErrors] = useState<Errors | null>(null);
+  const dispatch = useDispatch();
+  const loading = useSelector(
+    (state: { loading: LoadingState }) => state.loading.loading
+  );
 
   async function addTask(e: MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
+    dispatch(setLoading(true));
     const data = {
       name: name,
       description: description,
@@ -25,14 +42,18 @@ export default function TaskInput({
         body: JSON.stringify(data),
       });
       if (res.ok) {
-        let resData = await res.json();
-        console.log(resData);
         updateTasks();
         setName("");
         setDescription("");
       }
+      if (res.status === 400) {
+        let resData = await res.json();
+        setErrors(resData.errors);
+      }
     } catch (err) {
       console.log(err);
+    } finally {
+      dispatch(setLoading(false));
     }
   }
   return (
@@ -44,26 +65,51 @@ export default function TaskInput({
         <label htmlFor="description" className="text-white">
           Description
         </label>
-        <button
-          onClick={addTask}
-          className="row-span-2 bg-orange-400 text-white rounded-3xl w-max h-max px-4 py-2 self-center ml-auto font-semibold text-sm"
-        >
-          Add Todo
-        </button>
-        <input
-          type="text"
-          id="name"
-          className="rounded-lg h-8 border border-orange-400 px-1 outline-orange-400"
-          onChange={(e) => setName(e.target.value)}
-          value={name}
-        />
-        <input
-          type="text"
-          id="description"
-          className="rounded-lg h-8 border border-orange-400 px-1 outline-orange-400"
-          onChange={(e) => setDescription(e.target.value)}
-          value={description}
-        />
+        <div className="ml-auto row-span-2 flex items-center gap-3">
+          <div className="text-white text-lg self-center ">
+            {loading ? (
+              <div className="flex-col gap-4 w-full flex">
+                <div className="w-8 h-8 border-4 text-orange-400 text-4xl animate-spin border-white flex items-center border-t-orange-400 rounded-full"></div>
+              </div>
+            ) : (
+              ""
+            )}
+          </div>
+          <button
+            onClick={addTask}
+            className=" bg-orange-400 text-white rounded-3xl w-max h-max px-4 py-2 self-center font-semibold text-sm hover:bg-white hover:text-orange-400 active:bg-gray-200 transition-all transform outline-none focus:outline-orange-400 focus:outline-offset-2"
+          >
+            Add Todo
+          </button>
+        </div>
+        <div className="flex flex-col gap-2">
+          <input
+            type="text"
+            id="name"
+            className="rounded-lg h-8 border border-orange-400 px-1 outline-orange-400"
+            onChange={(e) => setName(e.target.value)}
+            value={name}
+          />
+          {errors && errors.name !== null ? (
+            <div className="text-gray-200 text-sm">{errors.name}</div>
+          ) : (
+            ""
+          )}
+        </div>
+        <div className="flex flex-col gap-2">
+          <input
+            type="text"
+            id="description"
+            className="rounded-lg h-8 border border-orange-400 px-1 outline-orange-400"
+            onChange={(e) => setDescription(e.target.value)}
+            value={description}
+          />
+          {errors && errors.description !== null ? (
+            <div className="text-gray-200 text-sm">{errors.description}</div>
+          ) : (
+            ""
+          )}
+        </div>
       </div>
     </>
   );

@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import TaskInput from "./components/TaskInput";
 import TaskList from "./components/TaskList";
+import { setTasks } from "./reducers/taskReducer";
+import { useDispatch, useSelector } from "react-redux";
+import { setLoading } from "./reducers/loadingReducer";
 
 interface Task {
   name?: string;
@@ -11,8 +14,13 @@ interface Task {
   _id?: string;
 }
 
+interface TaskState {
+  tasks: Task[];
+}
+
 export default function Home() {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const dispatch = useDispatch();
+  const tasks = useSelector((state: { tasks: TaskState }) => state.tasks.tasks);
 
   useEffect(() => {
     updateTasks();
@@ -20,13 +28,16 @@ export default function Home() {
 
   async function updateTasks() {
     try {
+      dispatch(setLoading(true));
       let res = await fetch("https://todo-lists-api.adaptable.app/tasks");
       if (res.ok) {
         let resData = await res.json();
-        setTasks(resData.tasks);
+        dispatch(setTasks(resData.tasks));
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      dispatch(setLoading(false));
     }
   }
 

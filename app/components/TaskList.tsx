@@ -32,8 +32,6 @@ export default function TaskList({
         body: JSON.stringify(updatedData),
       });
       if (res.ok) {
-        let resData = await res.json();
-        console.log(resData);
         updateTasks();
       }
     } catch (err) {
@@ -55,8 +53,6 @@ export default function TaskList({
         body: JSON.stringify(data),
       });
       if (res.ok) {
-        let resData = await res.json();
-        console.log(resData);
         updateTasks();
       }
     } catch (err) {
@@ -73,13 +69,15 @@ export default function TaskList({
             className="bg-neutral-700 w-full flex px-4 py-3 gap-4"
           >
             <div className="flex flex-col mr-auto">
-              <div
-                className={clsx("text-orange-400 text-3xl font-semibold", {
-                  "line-through": task.status === "Completed",
-                  "text-neutral-500": task.status === "Completed",
-                })}
-              >
-                {task.name}
+              <div className="text-orange-400 text-3xl font-semibold">
+                <span
+                  className={clsx({
+                    "line-through": task.status === "Completed",
+                    "text-neutral-500": task.status === "Completed",
+                  })}
+                >
+                  {task.name}
+                </span>
               </div>
               <div
                 className={clsx("", {
@@ -93,7 +91,7 @@ export default function TaskList({
             {task.status === "InComplete" ? (
               <button
                 onClick={(e) => updateTask(e, task._id as string)}
-                className="row-span-2 self-center bg-white text-green-500 border border-green-500 w-max h-max px-3 py-1 rounded-2xl text-sm font-semibold"
+                className="row-span-2 self-center bg-white text-green-500 border border-green-500 w-max h-max px-3 py-1 rounded-2xl text-sm font-semibold hover:bg-green-500 hover:text-white active:bg-green-600 transition-all transform outline-none focus:outline-green-500 focus:outline-offset-2"
               >
                 Complete
               </button>
@@ -103,7 +101,7 @@ export default function TaskList({
 
             <button
               onClick={(e) => deleteTask(e, task._id as string)}
-              className="row-span-2 self-center bg-white text-red-500 border border-red-500 w-max h-max px-3 py-1 rounded-2xl text-sm font-semibold"
+              className="row-span-2 self-center bg-white text-red-500 border border-red-500 w-max h-max px-3 py-1 rounded-2xl text-sm font-semibold hover:bg-red-500 hover:text-white active:bg-red-600 transition-all transform outline-none focus:outline-red-500 focus:outline-offset-2"
             >
               Delete
             </button>
