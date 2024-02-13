@@ -2,7 +2,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ![Preview image](./public/todo-preview.png)
 
-[Live Preview](https://todo-lists-d13cb.web.app)
+[Live Preview](https://main--chic-conkies-e7eef9.netlify.app)
 
 ## Getting Started
 
