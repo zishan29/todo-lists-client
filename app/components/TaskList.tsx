@@ -62,7 +62,7 @@ export default function TaskList({
 
   return (
     <>
-      <div className="grow text-white w-1/2 flex flex-col gap-1">
+      <div className="grow text-white w-11/12 md:w-4/5 lg:w-1/2 flex flex-col gap-1">
         {tasks.map((task) => (
           <div
             key={task._id}

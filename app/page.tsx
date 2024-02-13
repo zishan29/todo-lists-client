@@ -42,7 +42,7 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-24 bg-neutral-800 gap-6">
+    <main className="flex min-h-screen flex-col items-center pt-24 bg-neutral-800 gap-6">
       <div className="text-white font-semibold text-3xl">My Todos</div>
       <TaskInput updateTasks={updateTasks} />
       {tasks.length > 0 ? (
